@@ -116,17 +116,14 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'host' => $mongoUrl['host'] ?? env('MONGODB_HOST', '127.0.0.1'),
-            'port' => $mongoUrl['port'] ?? env('MONGODB_PORT', 27017),
-            'database' => ltrim($mongoUrl['path'] ?? env('MONGODB_DATABASE', 'waiting_room'), '/'),
-            'username' => $mongoUrl['user'] ?? env('MONGODB_USERNAME'),
-            'password' => $mongoUrl['pass'] ?? env('MONGODB_PASSWORD'),
-            'dsn' => env('MONGODB_URI'),  // This will be used if available
+            'host' => env('MONGODB_HOST', '127.0.0.1'),
+            'port' => env('MONGODB_PORT', 27017),
+            'database' => env('MONGODB_DATABASE', 'vsee'),
+            'username' => env('MONGODB_USERNAME'),
+            'password' => env('MONGODB_PASSWORD'),
+            'dsn' => env('MONGODB_URI'),  // Fallback to full URI if provided
             'options' => [
                 'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
-                'appname' => 'challege-vsee-cluster',
-                'tls' => true,
-                'tlsAllowInvalidCertificates' => true
             ],
             'prefix' => '',
             'prefix_indexes' => false,

@@ -51,3 +51,18 @@ Route::get('/test-mongodb', function() {
         return response()->json(['error' => $e->getMessage()], 500);
     }
 });
+
+// Test MongoDB Configuration Route
+Route::get('/test-mongodb-config', function() {
+    return response()->json([
+        'config' => config('database.connections.mongodb'),
+        'env' => [
+            'MONGODB_URI' => env('MONGODB_URI'),
+            'MONGODB_HOST' => env('MONGODB_HOST'),
+            'MONGODB_PORT' => env('MONGODB_PORT'),
+            'MONGODB_DATABASE' => env('MONGODB_DATABASE'),
+            'MONGODB_USERNAME' => env('MONGODB_USERNAME'),
+            'MONGODB_AUTH_DATABASE' => env('MONGODB_AUTH_DATABASE'),
+        ]
+    ]);
+});

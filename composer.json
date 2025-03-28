@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "mongodb/laravel-mongodb": "4.0.0",
+        "mongodb/mongodb": "1.15.0",
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "^7.2",
         "tymon/jwt-auth": "^2.0",

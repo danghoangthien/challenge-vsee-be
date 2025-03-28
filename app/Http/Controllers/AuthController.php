@@ -34,7 +34,7 @@ class AuthController extends Controller
                 'authorisation' => [
                     'token' => $token,
                     'type' => 'bearer',
-                    'expires_in' => config('jwt.ttl') * 60, // Convert minutes to seconds
+                    'expires_in' => JWTAuth::factory()->getTTL() * 60
                 ]
             ]);
 
@@ -64,7 +64,7 @@ class AuthController extends Controller
             'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer',
-                'expires_in' => config('jwt.ttl') * 60, // Convert minutes to seconds
+                'expires_in' => JWTAuth::factory()->getTTL() * 60
             ]
         ]);
     }

@@ -14,8 +14,14 @@ class SetupMongoDB extends Command
     public function handle()
     {
         try {
-            $this->info('MongoDB URI: ' . config('database.connections.mongodb.host'));
-            $this->info('MongoDB Database: ' . config('database.connections.mongodb.database'));
+            $config = config('database.connections.mongodb');
+            $this->info('MongoDB Connection Info:');
+            $this->info('- Using DSN: ' . ($config['dsn'] ? 'Yes' : 'No'));
+            if (!$config['dsn']) {
+                $this->info('- Host: ' . $config['host']);
+                $this->info('- Port: ' . $config['port']);
+            }
+            $this->info('- Database: ' . $config['database']);
             
             // Create MongoDB collection
             $connection = DB::connection('mongodb');

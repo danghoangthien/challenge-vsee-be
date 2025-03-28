@@ -121,6 +121,7 @@ return [
             'database' => ltrim($mongoUrl['path'] ?? env('MONGODB_DATABASE', 'waiting_room'), '/'),
             'username' => $mongoUrl['user'] ?? env('MONGODB_USERNAME'),
             'password' => $mongoUrl['pass'] ?? env('MONGODB_PASSWORD'),
+            'dsn' => env('MONGODB_URI'),  // This will be used if available
             'options' => [
                 'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
                 'appname' => 'challege-vsee-cluster'

@@ -5,9 +5,12 @@ $options = [
     'authSource' => 'admin',
     'retryWrites' => true,
     'w' => 'majority',
-    'tls' => true,
-    'tlsAllowInvalidCertificates' => true,
-    'tlsAllowInvalidHostnames' => true
+    'ssl' => true,
+    'sslVerifyCertificate' => false,
+    'driver' => [
+        'name' => 'mongoDB',
+        'version' => '1.15.0'
+    ]
 ];
 
 try {

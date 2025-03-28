@@ -118,11 +118,12 @@ return [
             'driver' => 'mongodb',
             'host' => $mongoUrl['host'] ?? env('MONGODB_HOST', '127.0.0.1'),
             'port' => $mongoUrl['port'] ?? env('MONGODB_PORT', 27017),
-            'database' => ltrim($mongoUrl['path'] ?? env('MONGODB_DATABASE'), '/'),
+            'database' => ltrim($mongoUrl['path'] ?? env('MONGODB_DATABASE', 'waiting_room'), '/'),
             'username' => $mongoUrl['user'] ?? env('MONGODB_USERNAME'),
             'password' => $mongoUrl['pass'] ?? env('MONGODB_PASSWORD'),
             'options' => [
                 'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
+                'appname' => 'challege-vsee-cluster'
             ],
             'prefix' => '',
             'prefix_indexes' => false,

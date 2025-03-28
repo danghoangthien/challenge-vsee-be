@@ -14,8 +14,15 @@ class SetupMongoDB extends Command
     public function handle()
     {
         try {
+            $this->info('MongoDB URI: ' . config('database.connections.mongodb.host'));
+            $this->info('MongoDB Database: ' . config('database.connections.mongodb.database'));
+            
             // Create MongoDB collection
-            $collection = DB::connection('mongodb')->collection('waiting_room_queue');
+            $connection = DB::connection('mongodb');
+            $this->info('MongoDB Connection established');
+            
+            $collection = $connection->collection('waiting_room_queue');
+            $this->info('Collection selected: waiting_room_queue');
 
             // Create indexes for better query performance
             $collection->raw(function($collection) {
@@ -28,6 +35,7 @@ class SetupMongoDB extends Command
         } catch (\Exception $e) {
             Log::warning('MongoDB setup failed: ' . $e->getMessage());
             $this->error('MongoDB setup failed: ' . $e->getMessage());
+            $this->error('Stack trace: ' . $e->getTraceAsString());
         }
     }
 } 

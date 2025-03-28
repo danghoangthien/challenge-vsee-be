@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "36a5ff1a0353b6fcc2868c7f3e1fb34c",
+    "content-hash": "6487369eabd091eff31a92482867e9f1",
     "packages": [
         {
             "name": "brick/math",
@@ -2029,58 +2029,46 @@
         },
         {
             "name": "mongodb/laravel-mongodb",
-            "version": "4.8.1",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mongodb/laravel-mongodb.git",
-                "reference": "da3a46a1b4ca25117c1d388dd6348206d04e4a9f"
+                "reference": "1af8b9dcfe336c83b0aa8f09193747129c2bb663"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mongodb/laravel-mongodb/zipball/da3a46a1b4ca25117c1d388dd6348206d04e4a9f",
-                "reference": "da3a46a1b4ca25117c1d388dd6348206d04e4a9f",
+                "url": "https://api.github.com/repos/mongodb/laravel-mongodb/zipball/1af8b9dcfe336c83b0aa8f09193747129c2bb663",
+                "reference": "1af8b9dcfe336c83b0aa8f09193747129c2bb663",
                 "shasum": ""
             },
             "require": {
-                "composer-runtime-api": "^2.0.0",
                 "ext-mongodb": "^1.15",
-                "illuminate/cache": "^10.36|^11",
-                "illuminate/container": "^10.0|^11",
-                "illuminate/database": "^10.30|^11",
-                "illuminate/events": "^10.0|^11",
-                "illuminate/support": "^10.0|^11",
+                "illuminate/container": "^10.0",
+                "illuminate/database": "^10.0",
+                "illuminate/events": "^10.0",
+                "illuminate/support": "^10.0",
                 "mongodb/mongodb": "^1.15",
                 "php": "^8.1"
-            },
-            "conflict": {
-                "illuminate/bus": "< 10.37.2"
             },
             "replace": {
                 "jenssegers/mongodb": "self.version"
             },
             "require-dev": {
                 "doctrine/coding-standard": "12.0.x-dev",
-                "league/flysystem-gridfs": "^3.28",
-                "league/flysystem-read-only": "^3.0",
                 "mockery/mockery": "^1.4.4",
-                "mongodb/builder": "^0.2",
-                "orchestra/testbench": "^8.0|^9.0",
-                "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^10.3",
-                "spatie/laravel-query-builder": "^5.6"
-            },
-            "suggest": {
-                "league/flysystem-gridfs": "Filesystem storage in MongoDB with GridFS",
-                "mongodb/builder": "Provides a fluent aggregation builder for MongoDB pipelines"
+                "orchestra/testbench": "^8.0",
+                "phpunit/phpunit": "^10.3"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
                         "MongoDB\\Laravel\\MongoDBServiceProvider",
-                        "MongoDB\\Laravel\\MongoDBQueueServiceProvider",
-                        "MongoDB\\Laravel\\MongoDBBusServiceProvider"
+                        "MongoDB\\Laravel\\MongoDBQueueServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-master": "4.0.x-dev"
                 }
             },
             "autoload": {
@@ -2127,9 +2115,9 @@
             "support": {
                 "issues": "https://www.mongodb.com/support",
                 "security": "https://www.mongodb.com/security",
-                "source": "https://github.com/mongodb/laravel-mongodb/tree/4.8.1"
+                "source": "https://github.com/mongodb/laravel-mongodb/tree/4.0.0"
             },
-            "time": "2024-11-20T15:01:02+00:00"
+            "time": "2023-09-28T11:54:46+00:00"
         },
         {
             "name": "mongodb/mongodb",
@@ -8734,7 +8722,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.1",
-        "ext-mongodb": "^1.20.0"
+        "ext-mongodb": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"

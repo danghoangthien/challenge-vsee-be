@@ -11,11 +11,11 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "mongodb/laravel-mongodb": "^4.0",
+        "mongodb/laravel-mongodb": "4.0.0",
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "^7.2",
         "tymon/jwt-auth": "^2.0",
-        "ext-mongodb": "^1.20.0"
+        "ext-mongodb": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

@@ -14,7 +14,13 @@ class User extends Authenticatable implements JWTSubject
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $connection = 'mysql';
+    protected $connection = null;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->connection = config('database.default');
+    }
 
     /**
      * The attributes that are mass assignable.

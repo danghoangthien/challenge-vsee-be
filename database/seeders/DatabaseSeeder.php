@@ -20,4 +20,14 @@ class DatabaseSeeder extends Seeder
             VisitorSeeder::class
         ]);
     }
+
+    /**
+     * Get the database connection that should be used by the seeder.
+     *
+     * @return \Illuminate\Database\Connection
+     */
+    protected function getConnection()
+    {
+        return \Illuminate\Support\Facades\DB::connection('mysql_primary');
+    }
 }

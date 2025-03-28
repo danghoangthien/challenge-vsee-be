@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'mysql_primary'),
 
     /*
     |--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ return [
             'synchronous' => null,
         ],
 
-        'mysql' => [
+        'mysql_primary' => [
             'driver' => 'mysql',
             'url' => env('JAWSDB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
@@ -124,6 +124,10 @@ return [
             'options' => [
                 'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
             ],
+            'prefix' => '',
+            'prefix_indexes' => false,
+            'migrations' => false,
+            'schema' => false,
         ],
 
     ],
@@ -142,6 +146,7 @@ return [
     'migrations' => [
         'table' => 'migrations',
         'update_date_on_publish' => true,
+        'connection' => 'mysql_primary',
     ],
 
     /*

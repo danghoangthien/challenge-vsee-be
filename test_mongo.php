@@ -2,13 +2,11 @@
 
 $uri = "mongodb+srv://danghoangthien:Q6b4Mo8cddDbQViz@challege-vsee-cluster.qun9h9b.mongodb.net/vsee";
 $options = [
-    'ssl' => true,
     'retryWrites' => true,
     'w' => 'majority',
     'appName' => 'challege-vsee-cluster',
     'tls' => true,
-    'tlsAllowInvalidCertificates' => true,
-    'tlsInsecure' => true
+    'tlsCAFile' => '/etc/ssl/certs/ca-certificates.crt'
 ];
 
 try {

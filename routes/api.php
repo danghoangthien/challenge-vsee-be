@@ -66,3 +66,24 @@ Route::get('/test-mongodb-config', function() {
         ]
     ]);
 });
+
+// Test TLS Route
+Route::get('/test-tls', function() {
+    $info = [];
+    
+    // Get OpenSSL version
+    $info['openssl_version'] = OPENSSL_VERSION_TEXT;
+    
+    // Get PHP version
+    $info['php_version'] = PHP_VERSION;
+    
+    // Get SSL/TLS info
+    $ch = curl_init('https://www.howsmyssl.com/a/check');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    
+    $info['tls_check'] = json_decode($response, true);
+    
+    return response()->json($info);
+});

@@ -116,14 +116,16 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'host' => env('MONGODB_HOST', '127.0.0.1'),
-            'port' => env('MONGODB_PORT', 27017),
+            'dsn' => env('MONGODB_URI'),
             'database' => env('MONGODB_DATABASE', 'vsee'),
-            'username' => env('MONGODB_USERNAME'),
-            'password' => env('MONGODB_PASSWORD'),
-            'dsn' => env('MONGODB_URI'),  // Fallback to full URI if provided
             'options' => [
                 'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
+                'ssl' => true,
+                'sslVerifyCertificate' => false,
+                'driver' => [
+                    'name' => 'mongoDB',
+                    'version' => '1.15.0'
+                ]
             ],
             'prefix' => '',
             'prefix_indexes' => false,

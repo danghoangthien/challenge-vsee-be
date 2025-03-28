@@ -124,7 +124,9 @@ return [
             'dsn' => env('MONGODB_URI'),  // This will be used if available
             'options' => [
                 'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
-                'appname' => 'challege-vsee-cluster'
+                'appname' => 'challege-vsee-cluster',
+                'tls' => true,
+                'tlsAllowInvalidCertificates' => true
             ],
             'prefix' => '',
             'prefix_indexes' => false,

@@ -1,25 +1,18 @@
 <?php
+require __DIR__.'/vendor/autoload.php';
 
-$uri = "mongodb+srv://danghoangthien:Q6b4Mo8cddDbQViz@challege-vsee-cluster.qun9h9b.mongodb.net/vsee";
-$options = [
-    'authSource' => 'admin',
-    'retryWrites' => true,
-    'w' => 'majority',
-    'ssl' => true,
-    'sslVerifyCertificate' => false,
-    'driver' => [
-        'name' => 'mongoDB',
-        'version' => '1.15.0'
-    ]
-];
+use Illuminate\Support\Facades\DB;
+
+$app = require_once __DIR__.'/bootstrap/app.php';
+$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 try {
-    $manager = new MongoDB\Driver\Manager($uri, $options);
+    $connection = DB::connection('mongodb');
     echo "Connected successfully\n";
     
-    $command = new MongoDB\Driver\Command(['ping' => 1]);
-    $manager->executeCommand('vsee', $command);
-    echo "Database ping successful\n";
+    $collection = $connection->getCollection('test');
+    $collection->insertOne(['test' => 'connection']);
+    echo "Database operation successful\n";
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
     echo "Trace: " . $e->getTraceAsString() . "\n";

@@ -1,9 +1,18 @@
 <?php
 
-$uri = "mongodb+srv://danghoangthien:Q6b4Mo8cddDbQViz@challege-vsee-cluster.qun9h9b.mongodb.net/vsee?retryWrites=true&w=majority&appName=challege-vsee-cluster";
+$uri = "mongodb+srv://danghoangthien:Q6b4Mo8cddDbQViz@challege-vsee-cluster.qun9h9b.mongodb.net/vsee";
+$options = [
+    'ssl' => true,
+    'retryWrites' => true,
+    'w' => 'majority',
+    'appName' => 'challege-vsee-cluster',
+    'tls' => true,
+    'tlsAllowInvalidCertificates' => true,
+    'tlsInsecure' => true
+];
 
 try {
-    $manager = new MongoDB\Driver\Manager($uri);
+    $manager = new MongoDB\Driver\Manager($uri, $options);
     echo "Connected successfully\n";
     
     $command = new MongoDB\Driver\Command(['ping' => 1]);

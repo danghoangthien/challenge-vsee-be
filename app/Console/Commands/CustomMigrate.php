@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Config;
 
 class CustomMigrate extends Command
 {
@@ -13,15 +14,17 @@ class CustomMigrate extends Command
 
     public function handle()
     {
+        $connection = Config::get('database.default');
+
         if ($this->option('fresh')) {
             $this->info('Dropping all tables...');
-            Schema::connection('mysql_primary')->dropAllTables();
+            Schema::connection($connection)->dropAllTables();
         }
 
         // First, ensure migrations table exists
         $this->info('Creating migrations table if it does not exist...');
-        if (!Schema::connection('mysql_primary')->hasTable('migrations')) {
-            Schema::connection('mysql_primary')->create('migrations', function ($table) {
+        if (!Schema::connection($connection)->hasTable('migrations')) {
+            Schema::connection($connection)->create('migrations', function ($table) {
                 $table->increments('id');
                 $table->string('migration');
                 $table->integer('batch');
@@ -37,7 +40,7 @@ class CustomMigrate extends Command
             
             // Skip if migration already exists and not doing fresh
             if (!$this->option('fresh')) {
-                $exists = DB::connection('mysql_primary')
+                $exists = DB::connection($connection)
                     ->table('migrations')
                     ->where('migration', $migrationName)
                     ->exists();
@@ -55,7 +58,7 @@ class CustomMigrate extends Command
             $migrationClass->up();
 
             // Record the migration
-            DB::connection('mysql_primary')->table('migrations')->insert([
+            DB::connection($connection)->table('migrations')->insert([
                 'migration' => $migrationName,
                 'batch' => $batch,
             ]);
@@ -65,7 +68,7 @@ class CustomMigrate extends Command
         if ($this->option('seed')) {
             $this->info('Running seeders...');
             $this->call('db:seed', [
-                '--database' => 'mysql_primary',
+                '--database' => $connection,
                 '--force' => true,
             ]);
         }

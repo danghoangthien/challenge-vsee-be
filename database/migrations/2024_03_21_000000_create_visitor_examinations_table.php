@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('visitor_id')->constrained('visitors')->onDelete('cascade');
             $table->foreignId('provider_id')->constrained('providers')->onDelete('cascade');
-            $table->string('queue_entry_id', 24); // MongoDB ObjectId length is 24 characters
-            $table->timestamp('started_at');
+            $table->timestamp('started_at')->nullable();
             $table->timestamp('ended_at')->nullable();
-            $table->string('status')->default('in_progress'); // in_progress, completed, cancelled
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

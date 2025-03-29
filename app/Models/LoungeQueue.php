@@ -21,14 +21,4 @@ class LoungeQueue extends Model
     protected $casts = [
         'joined_at' => 'datetime'
     ];
-
-    public function visitor(): BelongsTo
-    {
-        return $this->belongsTo(Visitor::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 } 

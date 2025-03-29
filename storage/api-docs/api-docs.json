@@ -1,0 +1,941 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Lounge Queue API Documentation",
+        "description": "API documentation for the Lounge Queue system",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "API Server"
+        },
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/api/events": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "List all available WebSocket events",
+                "description": "Documentation for all WebSocket events that clients can subscribe to",
+                "operationId": "listEvents",
+                "responses": {
+                    "200": {
+                        "description": "List of all available events",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "events": {
+                                            "properties": {
+                                                "visitor.{id}": {
+                                                    "description": "Private channel for visitor-specific events. Replace {id} with visitor_id",
+                                                    "properties": {
+                                                        "VisitorPickedUpEvent": {
+                                                            "description": "Triggered when a provider picks up a visitor",
+                                                            "properties": {
+                                                                "examination_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "provider_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "provider_name": {
+                                                                    "type": "string",
+                                                                    "example": "Dr. Smith"
+                                                                },
+                                                                "started_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time",
+                                                                    "example": "2024-03-29T10:00:00Z"
+                                                                },
+                                                                "waited_time": {
+                                                                    "type": "string",
+                                                                    "example": "5 minutes"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "VisitorExaminationCompletedEvent": {
+                                                            "description": "Triggered when provider completes examination",
+                                                            "properties": {
+                                                                "examination_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "provider_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "provider_name": {
+                                                                    "type": "string",
+                                                                    "example": "Dr. Smith"
+                                                                },
+                                                                "completed_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "duration": {
+                                                                    "type": "string",
+                                                                    "example": "15 minutes"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "VisitorExitedEvent": {
+                                                            "description": "Triggered when visitor exits the queue",
+                                                            "properties": {
+                                                                "position": {
+                                                                    "type": "integer",
+                                                                    "example": 3
+                                                                },
+                                                                "waited_time": {
+                                                                    "type": "string",
+                                                                    "example": "10 minutes"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "provider.{id}": {
+                                                    "description": "Private channel for provider-specific events. Replace {id} with provider_id",
+                                                    "properties": {
+                                                        "ProviderPickedUpVisitorEvent": {
+                                                            "description": "Triggered when provider successfully picks up a visitor",
+                                                            "properties": {
+                                                                "examination_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "visitor_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "visitor_name": {
+                                                                    "type": "string",
+                                                                    "example": "John Doe"
+                                                                },
+                                                                "started_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "waited_time": {
+                                                                    "type": "string",
+                                                                    "example": "5 minutes"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "ProviderExaminationCompletedEvent": {
+                                                            "description": "Triggered when provider completes an examination",
+                                                            "properties": {
+                                                                "examination_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "visitor_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "visitor_name": {
+                                                                    "type": "string",
+                                                                    "example": "John Doe"
+                                                                },
+                                                                "completed_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "duration": {
+                                                                    "type": "string",
+                                                                    "example": "15 minutes"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "ProviderPostponeVisitorEvent": {
+                                                            "description": "Triggered when provider is busy and visitor needs to wait",
+                                                            "properties": {
+                                                                "visitor_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "visitor_name": {
+                                                                    "type": "string",
+                                                                    "example": "John Doe"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string",
+                                                                    "example": "Provider is currently busy with another visitor"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "lounge.queue": {
+                                                    "description": "Public channel for queue-related events",
+                                                    "properties": {
+                                                        "VisitorJoinedQueue": {
+                                                            "description": "Triggered when a new visitor joins the queue",
+                                                            "properties": {
+                                                                "visitor_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "visitor_name": {
+                                                                    "type": "string",
+                                                                    "example": "John Doe"
+                                                                },
+                                                                "position": {
+                                                                    "type": "integer",
+                                                                    "example": 4
+                                                                },
+                                                                "joined_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "VisitorExitedQueue": {
+                                                            "description": "Triggered when a visitor exits the queue",
+                                                            "properties": {
+                                                                "visitor_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "visitor_name": {
+                                                                    "type": "string",
+                                                                    "example": "John Doe"
+                                                                },
+                                                                "position": {
+                                                                    "type": "integer",
+                                                                    "example": 3
+                                                                },
+                                                                "waited_time": {
+                                                                    "type": "string",
+                                                                    "example": "10 minutes"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Authenticate user and get token",
+                "description": "Login with email and password to get JWT token",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "john@example.com"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "provider",
+                                                        "visitor"
+                                                    ],
+                                                    "example": "provider"
+                                                },
+                                                "type_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "authorisation": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "integer",
+                                                    "example": 3600
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The email field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout user",
+                "description": "Invalidate the JWT token",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/refresh": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh token",
+                "description": "Get a new token when the current one is about to expire",
+                "operationId": "refresh",
+                "responses": {
+                    "200": {
+                        "description": "Token refreshed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "john@example.com"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "provider",
+                                                        "visitor"
+                                                    ],
+                                                    "example": "provider"
+                                                },
+                                                "type_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "authorisation": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "integer",
+                                                    "example": 3600
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/visitor/lounge/queue": {
+            "post": {
+                "tags": [
+                    "Lounge Queue"
+                ],
+                "summary": "Add visitor to queue",
+                "description": "Add a visitor to the waiting room queue",
+                "operationId": "enqueueVisitor",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "visitor_id"
+                                ],
+                                "properties": {
+                                    "visitor_id": {
+                                        "description": "ID of the visitor to add to queue",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Visitor successfully added to queue",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "position": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Successfully added to waiting room queue"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Visitor already in queue"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Lounge Queue"
+                ],
+                "summary": "Remove visitor from queue",
+                "description": "Remove a visitor from the waiting room queue",
+                "operationId": "exitQueue",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "visitor_id"
+                                ],
+                                "properties": {
+                                    "visitor_id": {
+                                        "description": "ID of the visitor to remove from queue",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Visitor successfully removed from queue",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully removed from queue"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Visitor not found in queue"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/provider/lounge/list": {
+            "get": {
+                "tags": [
+                    "Lounge Queue"
+                ],
+                "summary": "Get waiting list",
+                "description": "Get the current waiting room queue list",
+                "operationId": "getWaitingList",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved waiting list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "visitors": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "position": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "visitor_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "visitor_name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "reason": {
+                                                                "type": "string",
+                                                                "nullable": true
+                                                            },
+                                                            "waiting_time": {
+                                                                "type": "string",
+                                                                "example": "5 minutes ago"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/provider/lounge/pickup": {
+            "post": {
+                "tags": [
+                    "Lounge Queue"
+                ],
+                "summary": "Pick up visitor",
+                "description": "Pick up a visitor from the waiting room queue",
+                "operationId": "pickupVisitor",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "visitor_id"
+                                ],
+                                "properties": {
+                                    "visitor_id": {
+                                        "description": "ID of the visitor to pick up",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Visitor successfully picked up",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "visitor_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "visitor_name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "waited_time": {
+                                                    "type": "string",
+                                                    "example": "5 minutes ago"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Successfully picked up visitor from queue"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Visitor not found in queue"
+                    },
+                    "409": {
+                        "description": "Provider is busy"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/provider/lounge/dropoff": {
+            "post": {
+                "tags": [
+                    "Lounge Queue"
+                ],
+                "summary": "Drop off visitor",
+                "description": "Complete a visitor examination and remove them from the provider's care",
+                "operationId": "dropoffVisitor",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "visitor_id"
+                                ],
+                                "properties": {
+                                    "visitor_id": {
+                                        "description": "ID of the visitor to drop off",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Visitor successfully dropped off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "visitor_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "visitor_name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "examination_duration": {
+                                                    "type": "string",
+                                                    "example": "15 minutes"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Successfully completed visitor examination"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Visitor examination not found or not in progress"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Events",
+            "description": "WebSocket events documentation for real-time updates"
+        },
+        {
+            "name": "Authentication",
+            "description": "API endpoints for user authentication"
+        },
+        {
+            "name": "Lounge Queue",
+            "description": "API endpoints for managing the lounge queue system"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ]
+}

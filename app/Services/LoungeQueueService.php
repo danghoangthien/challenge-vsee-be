@@ -15,6 +15,9 @@ use App\Events\VisitorExitedEvent;
 use App\Exceptions\ProviderBusyException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\VisitorAlreadyInQueueException;
+use App\Events\VisitorJoinedQueue;
+use App\Events\VisitorExitedQueue;
+use Illuminate\Support\Facades\Log;
 
 class LoungeQueueService
 {
@@ -52,6 +55,8 @@ class LoungeQueueService
             'joined_at' => now(),
         ]);
 
+        event(new VisitorJoinedQueue($visitor));
+
         return $lastPosition + 1;
     }
 
@@ -60,25 +65,32 @@ class LoungeQueueService
      */
     public function getWaitingList(): array
     {
-        $waitingList = LoungeQueue::orderBy('position', 'asc')
-            ->with(['visitor', 'visitor.user'])
-            ->get()
-            ->map(function ($queue) {
-                return [
-                    'position' => $queue->position,
-                    'visitor_id' => $queue->visitor_id,
-                    'visitor_name' => $queue->visitor->user->name ?? 'Unknown',
-                    'joined_at' => $queue->joined_at,
-                    'reason' => $queue->reason,
-                    'waiting_time' => $queue->joined_at->diffForHumans()
-                ];
-            });
+        $waitingList = LoungeQueue::orderBy('position', 'asc')->get();
+        
+        // Get all visitor IDs from the queue
+        $visitorIds = $waitingList->pluck('visitor_id')->toArray();
+        
+        // Fetch visitors and their users from MySQL
+        $visitors = Visitor::with('user')->whereIn('id', $visitorIds)->get();
+        $visitorsMap = $visitors->keyBy('id');
+
+        $formattedList = $waitingList->map(function ($queue) use ($visitorsMap) {
+            $visitor = $visitorsMap->get($queue->visitor_id);
+            return [
+                'position' => $queue->position,
+                'visitor_id' => $queue->visitor_id,
+                'visitor_name' => $visitor ? $visitor->user->name : 'Unknown',
+                'joined_at' => $queue->joined_at,
+                'reason' => $queue->reason,
+                'waiting_time' => $queue->joined_at->diffForHumans()
+            ];
+        });
 
         return [
             'success' => true,
             'data' => [
-                'total' => $waitingList->count(),
-                'visitors' => $waitingList
+                'total' => $formattedList->count(),
+                'visitors' => $formattedList
             ]
         ];
     }
@@ -107,10 +119,9 @@ class LoungeQueueService
         // Get queue entry based on visitor_id if provided, otherwise get first in queue
         $queueEntry = null;
         if ($visitorId) {
-            $queueEntry = LoungeQueue::where('visitor_id', $visitorId)->first();
-            
+            $queueEntry = LoungeQueue::where('visitor_id', (int)$visitorId)->first();
             if (!$queueEntry) {
-                throw new NotFoundException('Visitor not found in waiting queue');
+                throw new NotFoundException('Visitor not found in waiting queue!!!');
             }
         } else {
             $queueEntry = LoungeQueue::orderBy('position', 'asc')->first();
@@ -137,7 +148,6 @@ class LoungeQueueService
                 $examination = VisitorExamination::create([
                     'visitor_id' => $queueEntry->visitor_id,
                     'provider_id' => $provider->id,
-                    'queue_entry_id' => $queueEntry->id,
                     'started_at' => now(),
                     'status' => 'in_progress'
                 ]);
@@ -207,27 +217,22 @@ class LoungeQueueService
      */
     public function exitQueue(Visitor $visitor): array
     {
-        // Find the visitor's queue entry
         $queueEntry = LoungeQueue::where('visitor_id', $visitor->id)->first();
-        
+
         if (!$queueEntry) {
             throw new NotFoundException('Visitor not found in waiting queue');
         }
 
-        $position = $queueEntry->position;
-        $waitedTime = $queueEntry->joined_at->diffForHumans();
-
         // Use Redis lock to prevent race conditions
-        return $this->redisLock->executeWithLock(self::LOCK_POSITION, function () use ($queueEntry, $position, $visitor, $waitedTime) {
+        return $this->redisLock->executeWithLock(self::LOCK_POSITION, function () use ($queueEntry, $visitor) {
             DB::beginTransaction();
             try {
-                // Remove from queue and update positions
+                // Remove visitor from queue and update positions
                 $queueEntry->delete();
-                LoungeQueue::where('position', '>', $position)
+                LoungeQueue::where('position', '>', $queueEntry->position)
                     ->update(['position' => DB::raw('position - 1')]);
 
-                // Dispatch event to notify about visitor exit
-                event(new VisitorExitedEvent($visitor, $position, $waitedTime));
+                event(new VisitorExitedQueue($visitor));
 
                 DB::commit();
 
@@ -236,7 +241,7 @@ class LoungeQueueService
                     'data' => [
                         'visitor_id' => $visitor->id,
                         'visitor_name' => $visitor->user->name ?? 'Unknown',
-                        'waited_time' => $waitedTime,
+                        'waited_time' => $queueEntry->joined_at->diffForHumans(),
                         'message' => 'Successfully removed from queue'
                     ]
                 ];

@@ -65,7 +65,7 @@ return [
         ],
 
         'mariadb' => [
-            'driver' => 'mariadb',
+            'driver' => 'mysql',
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
@@ -120,7 +120,7 @@ return [
             'database' => env('MONGODB_DATABASE', 'vsee'),
             'options' => [
                 'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
-                'ssl' => true,
+                'ssl' => env('MONGODB_SSL', true),
                 'sslVerifyCertificate' => false,
                 'driver' => [
                     'name' => 'mongoDB',
@@ -146,11 +146,13 @@ return [
     |
     */
 
-    'migrations' => [
-        'table' => 'migrations',
-        'update_date_on_publish' => true,
-        'connection' => 'mysql_primary',
-    ],
+    // 'migrations' => [
+    //     'migrations' => 'migrations',
+    //     //'update_date_on_publish' => true,
+    //     'connection' => 'mysql_primary',
+    // ],
+
+    'migrations' => 'migrations',
 
     /*
     |--------------------------------------------------------------------------

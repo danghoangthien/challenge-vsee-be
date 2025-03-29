@@ -1,0 +1,91 @@
+{
+    "name": "Lounge Queue API",
+    "description": "A Laravel API for managing lounge queue system",
+    "keywords": [
+        "laravel",
+        "queue",
+        "api"
+    ],
+    "website": "",
+    "repository": "",
+    "logo": "",
+    "success_url": "/",
+    "scripts": {
+        "postdeploy": "php artisan migrate --force"
+    },
+    "env": {
+        "APP_NAME": {
+            "description": "The application name",
+            "value": "Lounge Queue API"
+        },
+        "APP_ENV": {
+            "description": "The application environment",
+            "value": "production"
+        },
+        "APP_KEY": {
+            "description": "The application encryption key",
+            "generator": "secret"
+        },
+        "APP_DEBUG": {
+            "description": "Debug mode",
+            "value": "false"
+        },
+        "DB_CONNECTION": {
+            "description": "Database connection",
+            "value": "mysql"
+        },
+        "MONGODB_URI": {
+            "description": "MongoDB connection URI",
+            "required": true
+        },
+        "JWT_SECRET": {
+            "description": "JWT secret key",
+            "generator": "secret"
+        },
+        "JWT_TTL": {
+            "description": "JWT token time to live (in minutes)",
+            "value": "60"
+        },
+        "BROADCAST_DRIVER": {
+            "description": "Broadcasting driver",
+            "value": "pusher"
+        },
+        "QUEUE_CONNECTION": {
+            "description": "Queue connection",
+            "value": "database"
+        },
+        "LOG_CHANNEL": {
+            "description": "Log channel",
+            "value": "stack"
+        }
+    },
+    "formation": {
+        "web": {
+            "quantity": 1,
+            "size": "basic"
+        },
+        "worker": {
+            "quantity": 1,
+            "size": "basic"
+        }
+    },
+    "addons": [
+        {
+            "plan": "jawsdb:kitefin",
+            "as": "DATABASE"
+        },
+        {
+            "plan": "mongolab:sandbox",
+            "as": "MONGODB"
+        },
+        {
+            "plan": "pusher:sandbox",
+            "as": "PUSHER"
+        }
+    ],
+    "buildpacks": [
+        {
+            "url": "heroku/php"
+        }
+    ]
+} 

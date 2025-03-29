@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoungeController;
 use App\Http\Controllers\WaitingRoomController;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Api\SwaggerController;
+use App\Http\Controllers\Api\EventsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,9 +20,19 @@ use Illuminate\Support\Facades\DB;
 |
 */
 
+
+// Route::get('/test-event', [TestController::class, 'sendTestEvent']);
+
+// Swagger documentation routes
+Route::group(['prefix' => 'docs'], function () {
+    Route::get('/', [SwaggerController::class, 'api'])->name('l5-swagger.default.api');
+    Route::get('docs.json', [SwaggerController::class, 'docs'])->name('l5-swagger.default.docs');
+    Route::get('oauth2-callback', [SwaggerController::class, 'oauth2Callback'])->name('l5-swagger.default.oauth2-callback');
+    Route::get('assets/{asset}', [SwaggerController::class, 'asset'])->name('l5-swagger.default.asset');
+});
+
 // Public routes (no auth required)
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/test-event', [TestController::class, 'sendTestEvent']);
 
 // Protected routes (auth required)
 Route::middleware('auth:api')->group(function () {
@@ -34,7 +46,7 @@ Route::middleware('auth:api')->group(function () {
     });
 
     // Provider-specific routes
-    Route::prefix('provider')->middleware('provider')->group(function () {
+    Route::prefix('provider')->middleware(['auth:api', 'user', 'provider'])->group(function () {
         Route::get('/lounge/list', [LoungeController::class, 'getWaitingList']);
         Route::post('/lounge/pickup', [LoungeController::class, 'pickupVisitor']);
         Route::post('/lounge/dropoff', [LoungeController::class, 'dropoffVisitor']);
@@ -67,23 +79,5 @@ Route::get('/test-mongodb-config', function() {
     ]);
 });
 
-// Test TLS Route
-Route::get('/test-tls', function() {
-    $info = [];
-    
-    // Get OpenSSL version
-    $info['openssl_version'] = OPENSSL_VERSION_TEXT;
-    
-    // Get PHP version
-    $info['php_version'] = PHP_VERSION;
-    
-    // Get SSL/TLS info
-    $ch = curl_init('https://www.howsmyssl.com/a/check');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    curl_close($ch);
-    
-    $info['tls_check'] = json_decode($response, true);
-    
-    return response()->json($info);
-});
+// Events documentation
+Route::get('/events', [EventsController::class, 'index']);

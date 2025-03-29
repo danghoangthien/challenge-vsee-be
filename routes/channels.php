@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,22 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
+// Test channel
 Broadcast::channel('test-channel', function () {
+    return true;
+});
+
+// Visitor private channel
+Broadcast::channel('visitor.{id}', function (User $user, $id) {
+    return $user->visitor && $user->visitor->id == $id;
+});
+
+// Provider private channel
+Broadcast::channel('provider.{id}', function (User $user, $id) {
+    return $user->provider && $user->provider->id == $id;
+});
+
+// Public lounge queue channel
+Broadcast::channel('lounge.queue', function () {
     return true;
 }); 

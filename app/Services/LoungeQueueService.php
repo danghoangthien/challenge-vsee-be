@@ -11,7 +11,6 @@ use App\Events\ProviderPickedUpVisitorEvent;
 use App\Events\ProviderPostponeVisitorEvent;
 use App\Services\RedisLock;
 use App\Models\Provider;
-use App\Events\VisitorExitedEvent;
 use App\Exceptions\ProviderBusyException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\VisitorAlreadyInQueueException;
@@ -156,8 +155,10 @@ class LoungeQueueService
 
                 // Remove visitor from queue and update positions
                 $queueEntry->delete();
-                LoungeQueue::where('position', '>', $queueEntry->position)
-                    ->update(['position' => DB::raw('position - 1')]);
+                if (LoungeQueue::where('position', '>', $queueEntry->position)->exists()) {
+                    LoungeQueue::where('position', '>', $queueEntry->position)
+                        ->update(['position' => DB::raw('position - 1')]);
+                }
 
                 // Dispatch events to notify both visitor and provider
                 Log::info('Dispatching ProviderPickedUpVisitorEvent', [
@@ -207,12 +208,15 @@ class LoungeQueueService
             try {
                 // Remove visitor from queue and update positions
                 $queueEntry->delete();
-                LoungeQueue::where('position', '>', $queueEntry->position)
-                    ->update(['position' => DB::raw('position - 1')]);
+                if (LoungeQueue::where('position', '>', $queueEntry->position)->exists()) {
+                    LoungeQueue::where('position', '>', $queueEntry->position)
+                        ->update(['position' => DB::raw('position - 1')]);
+                }
 
                 Log::info('Firing VisitorExitedQueue', [
                     'visitor_id' => $visitor->id
                 ]);
+
                 event(new VisitorExitedQueue($visitor));
 
                 DB::commit();
@@ -249,8 +253,8 @@ class LoungeQueueService
             throw new NotFoundException('Visitor not found in queue');
         }
 
-        // Ensure position is an integer
-        $position = (int) $queueItem->position;
+        // Ensure position is an integer and at least 1
+        $position = max(1, (int) $queueItem->position);
         
         // Calculate estimated wait time (assuming average 5 minutes per visitor)
         $estimatedWaitTime = ($position - 1) * 5 . ' minutes';

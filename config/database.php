@@ -124,10 +124,10 @@ return [
             'password' => env('MONGODB_PASSWORD', 'password'),
             'options' => [
                 'database' => env('MONGODB_AUTH_DATABASE', 'admin'),
-                'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
+                'authSource' => env('MONGODB_USERNAME', 'admin'),
                 'authMechanism' => 'SCRAM-SHA-1',
-                'retryWrites' => false,
-                'tls' => false,
+                'retryWrites' => true,
+                'tls' => true,
                 'tlsAllowInvalidCertificates' => false,
                 'tlsAllowInvalidHostnames' => false
             ],

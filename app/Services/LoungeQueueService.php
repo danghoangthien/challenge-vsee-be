@@ -210,6 +210,9 @@ class LoungeQueueService
                 LoungeQueue::where('position', '>', $queueEntry->position)
                     ->update(['position' => DB::raw('position - 1')]);
 
+                Log::info('Firing VisitorExitedQueue', [
+                    'visitor_id' => $visitor->id
+                ]);
                 event(new VisitorExitedQueue($visitor));
 
                 DB::commit();

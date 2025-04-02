@@ -42,7 +42,10 @@ class ProviderPickedUpVisitorEvent implements ShouldBroadcastNow
             'examination_id' => $this->examination->id
         ]);
         
-        return [$channel];
+        return [
+            $channel,
+            new Channel('providers')
+        ];
     }
 
     /**

@@ -35,7 +35,7 @@ class ProviderExaminationCompletedEvent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('provider.' . $this->examination->provider_id)
+            new Channel('provider.' . $this->examination->provider_id),            
         ];
     }
 

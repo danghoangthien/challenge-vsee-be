@@ -29,6 +29,11 @@ Broadcast::channel('provider.{id}', function (User $user, $id) {
     return $user->provider && $user->provider->id == $id;
 });
 
+// Public providers only channel
+Broadcast::channel('providers', function () {
+    return true;
+}); 
+
 // Public lounge queue channel
 Broadcast::channel('lounge.queue', function () {
     return true;

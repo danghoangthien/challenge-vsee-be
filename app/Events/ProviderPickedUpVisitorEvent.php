@@ -58,7 +58,7 @@ class ProviderPickedUpVisitorEvent implements ShouldBroadcastNow
         $data = [
             'provider' => ProviderData::fromModel($this->examination->provider)->toArray(),
             'visitor' => VisitorData::fromModel($this->examination->visitor)->toArray(),
-            'message' => 'You have picked up a visitor',
+            'message' => 'A provider has picked up a visitor',
             'started_at' => $this->examination->started_at->toISOString(),
             'examination_id' => $this->examination->id
         ];

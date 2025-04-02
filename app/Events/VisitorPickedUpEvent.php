@@ -35,7 +35,8 @@ class VisitorPickedUpEvent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('visitor.' . $this->examination->visitor_id)
+            new Channel('visitor.' . $this->examination->visitor_id),
+            new Channel('lounge.queue')
         ];
     }
 
@@ -49,7 +50,7 @@ class VisitorPickedUpEvent implements ShouldBroadcastNow
         return [
             'provider' => ProviderData::fromModel($this->examination->provider)->toArray(),
             'visitor' => VisitorData::fromModel($this->examination->visitor)->toArray(),
-            'message' => 'You have been picked up by a provider',
+            'message' => 'A visitor has been picked up by a provider',
             'started_at' => $this->examination->started_at->toISOString(),
             'examination_id' => $this->examination->id,
             'reason' => $this->examination->reason

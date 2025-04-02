@@ -2,6 +2,10 @@
 
 A Laravel-based API for managing a lounge queue system, allowing providers to manage visitor examinations and queue management.
 
+## Author
+
+Dang Hoang Thien - danghoangthien@gmail.com
+
 ## Features
 
 - **Visitor Queue Management**

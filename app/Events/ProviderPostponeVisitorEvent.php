@@ -16,6 +16,7 @@ use Illuminate\Queue\SerializesModels;
 class ProviderPostponeVisitorEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    
 
     /**
      * Create a new event instance.

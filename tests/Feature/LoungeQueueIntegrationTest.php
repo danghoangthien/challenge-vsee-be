@@ -71,6 +71,7 @@ class LoungeQueueIntegrationTest extends BaseTestCase
             VisitorJoinedQueue::class,
             VisitorExitedQueue::class,
             ProviderPickedUpVisitorEvent::class,
+            VisitorExaminationCompletedEvent::class,
         ]);
 
         // Clear MongoDB collections
@@ -277,9 +278,9 @@ class LoungeQueueIntegrationTest extends BaseTestCase
     }
 
     /**
-     * Test provider can dropoff visitor
+     * Test provider can complete examination
      */
-    public function test_provider_can_dropoff_visitor(): void
+    public function test_provider_can_complete_examination(): void
     {
         // Add visitor to queue and pickup
         $this->withHeaders([
@@ -294,10 +295,10 @@ class LoungeQueueIntegrationTest extends BaseTestCase
             'visitor_id' => $this->visitor->id
         ]);
 
-        // Dropoff visitor
+        // Complete examination
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' .  $this->getJwtToken($this->providerUser)
-        ])->postJson('/api/provider/lounge/dropoff', [
+        ])->postJson('/api/provider/examination/complete', [
             'visitor_id' => $this->visitor->id
         ]);
 
@@ -309,5 +310,25 @@ class LoungeQueueIntegrationTest extends BaseTestCase
             'provider_id' => $this->provider->id,
             'status' => 'completed'
         ]);
+
+        // Debug event dispatch
+        $dispatchedEvents = Event::dispatched(VisitorExaminationCompletedEvent::class);
+        Log::info('Dispatched events:', ['events' => $dispatchedEvents->toArray()]);
+
+        // Verify event data
+        Event::assertDispatched(VisitorExaminationCompletedEvent::class, function ($event) {
+            $data = $event->broadcastWith();
+            Log::info('Event data:', ['data' => $data]);
+            return $data['visitor']['id'] === $this->visitor->id &&
+                   $data['provider']['id'] === $this->provider->id;
+        });
+
+        // Check if event was broadcast on correct channels
+        Event::assertDispatched(VisitorExaminationCompletedEvent::class, function ($event) {
+            $channels = $event->broadcastOn();
+            Log::info('Event channels:', ['channels' => collect($channels)->map(fn($channel) => $channel->name)->toArray()]);
+            return collect($channels)->contains(fn($channel) => $channel->name === 'provider.' . $this->provider->id) &&
+                   collect($channels)->contains(fn($channel) => $channel->name === 'visitor.' . $this->visitor->id);
+        });
     }
 }

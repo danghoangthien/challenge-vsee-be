@@ -393,11 +393,11 @@
                     "Authentication"
                 ],
                 "summary": "Logout user",
-                "description": "Invalidate the JWT token",
+                "description": "Logout the authenticated user and invalidate their token",
                 "operationId": "logout",
                 "responses": {
                     "200": {
-                        "description": "Logout successful",
+                        "description": "Successfully logged out",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -417,31 +417,9 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Unauthorized"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/refresh": {
@@ -600,6 +578,11 @@
                                                     "description": "How long the examination has been running",
                                                     "type": "string",
                                                     "example": "5 minutes"
+                                                },
+                                                "reason": {
+                                                    "description": "Reason for the examination",
+                                                    "type": "string",
+                                                    "example": "Regular checkup"
                                                 }
                                             },
                                             "type": "object"
@@ -700,6 +683,11 @@
                                                     "description": "How long the examination has been running",
                                                     "type": "string",
                                                     "example": "5 minutes"
+                                                },
+                                                "reason": {
+                                                    "description": "Reason for the examination",
+                                                    "type": "string",
+                                                    "example": "Regular checkup"
                                                 }
                                             },
                                             "type": "object"
@@ -1018,85 +1006,6 @@
                     },
                     "409": {
                         "description": "Provider is busy"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/provider/lounge/dropoff": {
-            "post": {
-                "tags": [
-                    "Lounge Queue"
-                ],
-                "summary": "Drop off visitor",
-                "description": "Complete a visitor examination and remove them from the provider's care",
-                "operationId": "dropoffVisitor",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "visitor_id"
-                                ],
-                                "properties": {
-                                    "visitor_id": {
-                                        "description": "ID of the visitor to drop off",
-                                        "type": "integer"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Visitor successfully dropped off",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "visitor_id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "visitor_name": {
-                                                    "type": "string",
-                                                    "example": "John Doe"
-                                                },
-                                                "examination_duration": {
-                                                    "type": "string",
-                                                    "example": "15 minutes"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "example": "Successfully completed visitor examination"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Visitor examination not found or not in progress"
                     },
                     "401": {
                         "description": "Unauthorized"

@@ -1,13 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TestController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoungeController;
-use App\Http\Controllers\WaitingRoomController;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\SwaggerController;
 use App\Http\Controllers\Api\EventsController;
+use App\Http\Controllers\ExaminationController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,13 +43,16 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('visitor')->middleware(['auth:api', 'user', 'visitor'])->group(function () {
         Route::post('/lounge/queue', [LoungeController::class, 'enqueue']);
         Route::delete('/lounge/queue', [LoungeController::class, 'exit']);
+        Route::get('/lounge/queueItem', [LoungeController::class, 'getQueueItemByCurrentVisitor']);
+        Route::get('/examination/detail', [ExaminationController::class, 'getExaminationByCurrentVisitor']);
     });
 
     // Provider-specific routes
     Route::prefix('provider')->middleware(['auth:api', 'user', 'provider'])->group(function () {
         Route::get('/lounge/list', [LoungeController::class, 'getWaitingList']);
         Route::post('/lounge/pickup', [LoungeController::class, 'pickupVisitor']);
-        Route::post('/lounge/dropoff', [LoungeController::class, 'dropoffVisitor']);
+        Route::post('/examination/complete', [ExaminationController::class, 'completeExamination']);
+        Route::get('/examination/detail', [ExaminationController::class, 'getExaminationByCurrentProvider']);
     });
 });
 
@@ -81,3 +84,25 @@ Route::get('/test-mongodb-config', function() {
 
 // Events documentation
 Route::get('/events', [EventsController::class, 'index']);
+
+// Test client event
+Route::post('/test-client-event', function() {
+    event(new \App\Events\ClientEvent('visitor-joined', [
+        'visitorId' => 123,
+        'timestamp' => now()
+    ]));
+    return response()->json(['message' => 'Client event triggered']);
+});
+
+// Test route for broadcasting
+Route::get('/broadcast-test', function () {
+    $provider = Auth::user()->provider;
+    if (!$provider) {
+        return response()->json(['error' => 'Not a provider'], 403);
+    }
+
+    return response()->json([
+        'channel' => 'provider.' . $provider->id,
+        'can_access' => Auth::user()->id === $provider->user_id
+    ]);
+});

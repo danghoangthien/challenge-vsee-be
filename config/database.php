@@ -116,21 +116,20 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => env('MONGODB_URI'),
+            'host' => env('MONGODB_HOST', 'mongodb'),
+            'port' => env('MONGODB_PORT', 27017),
             'database' => env('MONGODB_DATABASE', 'vsee'),
+            'username' => env('MONGODB_USERNAME', 'admin'),
+            'password' => env('MONGODB_PASSWORD', 'password'),
             'options' => [
+                'database' => env('MONGODB_AUTH_DATABASE', 'admin'),
                 'authSource' => env('MONGODB_AUTH_DATABASE', 'admin'),
-                'ssl' => env('MONGODB_SSL', true),
-                'sslVerifyCertificate' => false,
-                'driver' => [
-                    'name' => 'mongoDB',
-                    'version' => '1.15.0'
-                ]
+                'authMechanism' => 'SCRAM-SHA-1',
+                'retryWrites' => false,
+                'tls' => false,
+                'tlsAllowInvalidCertificates' => false,
+                'tlsAllowInvalidHostnames' => false
             ],
-            'prefix' => '',
-            'prefix_indexes' => false,
-            'migrations' => false,
-            'schema' => false,
         ],
 
     ],

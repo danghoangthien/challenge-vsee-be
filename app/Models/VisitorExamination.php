@@ -15,7 +15,8 @@ class VisitorExamination extends Model
         'provider_id',
         'started_at',
         'ended_at',
-        'status'
+        'status',
+        'reason'
     ];
 
     protected $casts = [

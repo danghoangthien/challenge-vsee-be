@@ -1,0 +1,141 @@
+== Info: Host login-api.mycloudwallet.com:443 was resolved.
+== Info: IPv6: (none)
+== Info: IPv4: 172.67.37.94, 104.22.17.185, 104.22.16.185
+== Info:   Trying 172.67.37.94:443...
+== Info: Connected to login-api.mycloudwallet.com (172.67.37.94) port 443
+== Info: ALPN: curl offers h2,http/1.1
+== Info: (304) (OUT), TLS handshake, Client hello (1):
+=> Send SSL data, 332 bytes (0x14c)
+0000: ...H....UEXI...=.3p......O....O....c.. ..fW...}....9@.=@2.B1....
+0040: ..VR....b.............0.,.(.$.......k.9...........=.5...../.+.'.
+0080: #.......g.3...E...<./...A.......................+............3.&
+00c0: .$... ....#.,$..2.<>....3....3....R...... .....login-api.mycloud
+0100: wallet.com......................................................
+0140: .h2.http/1.1
+== Info:  CAfile: /etc/ssl/cert.pem
+== Info:  CApath: none
+== Info: (304) (IN), TLS handshake, Server hello (2):
+<= Recv SSL data, 122 bytes (0x7a)
+0000: ...v....}pv..4.`u.jJ......>.nv...].... ..fW...}....9@.=@2.B1....
+0040: ..VR.........3.$... ...'s....Y..9%..x.5iUP..#>..Q....+....
+== Info: (304) (IN), TLS handshake, Unknown (8):
+<= Recv SSL data, 19 bytes (0x13)
+0000: .................h2
+== Info: (304) (IN), TLS handshake, Certificate (11):
+<= Recv SSL data, 2822 bytes (0xb06)
+0000: ..........=0..90..!........V.+..l{...$S...0...*.H........0`1.0..
+0040: .U....US1.0...U....DigiCert Inc1.0...U....www.digicert.com1.0...
+0080: U....RapidSSL TLS RSA CA G10...241210000000Z..251211235959Z0.1.0
+00c0: ...U....*.mycloudwallet.com0.."0...*.H.............0.........]..
+0100: }...6...y!6.8.eve....!..a.f..2.WO......O.....X.....=^..z.+Sn?...
+0140: ...hm|i.\s.C...~..G[:+.5..%.J.$w.......Pl.e.<.T..g..u..a.[..~...
+0180: .....e.....p......^...\.}..t.......METFgG..P...q.a..z~.3P.N6t...
+01c0: .....<S..Y?.i..%5:K..eM.v.gf.)s7.G..j....z..`.KFS.I..I..........
+0200: ..../0..+0...U.#..0.....l.I.Jg....z.HR..V80...U....... ..N..9l.r
+0240: ...GJ.x..01..U...*0(..*.mycloudwallet.com..mycloudwallet.com0>..
+0280: U. .70503..g.....0)0'..+.........http://www.digicert.com/CPS0...
+02c0: U...........0...U.%..0...+.........+.......0?..U...80604.2.0..ht
+0300: tp://cdp.rapidssl.com/RapidSSLTLSRSACAG1.crl0v..+........j0h0&..
+0340: +.....0...http://status.rapidssl.com0>..+.....0..2http://cacerts
+0380: .rapidssl.com/RapidSSLTLSRSACAG1.crt0...U.......0.0..~..+.....y.
+03c0: .....n...j.h.u....4.......2....=.P...:..v.,...*......u......F0D.
+0400:  $71.....{.z.k.OxO..d..@.[.&3..... ...yMGz..y....I.}a........%.:
+0440: .uV.v..<K.......W..$.8..Q/....p. ..>?.......u......G0E.!.....o.6
+0480: l.....8$9...]:;;.#(.....\.  .aw9L......|G.Ex...8y...+2.c4|S.w...
+04c0: 1c@w...A..q....@.......2...7.P......u......H0F.!..}U.U....%.no..
+0500: .........x..y...c.!..z....?.n.......ayW.g...A..[..TC0...*.H.....
+0540: ........'^......V..o}9E...A/..[)TN36,..L.....-....P.4....Xm..^.h
+0580: .(.e...U...k!.F.;.IC..+}....s ....'..GZ!.....(..X........../R..:
+05c0: .&.jPb....[L?".6.......QG$O.$z.z..'.X.1S..3..S_,.9..4.-..2O..D.=
+0600: X.(.G....-3...-{./.Z........W... ^.j. Jv......k.....f....@..==..
+0640: L.*...Y......0...0...........%."...*..N.R...0...*.H........0a1.0
+0680: ...U....US1.0...U....DigiCert Inc1.0...U....www.digicert.com1 0.
+06c0: ..U....DigiCert Global Root G20...171102122433Z..271102122433Z0`
+0700: 1.0...U....US1.0...U....DigiCert Inc1.0...U....www.digicert.com1
+0740: .0...U....RapidSSL TLS RSA CA G10.."0...*.H.............0.......
+0780: ...Y%D.5..]PI.......%..g..m..j..........^...7.(>.o\4~..N......L.
+07c0: ..w<...`...P86.IA....P..z.y."<.7.K@..NZn.t.9.a.0..(..#..DL....SE
+0800: 2.a.m............Ia....o.......y7.K..G.....!....-.EZ[..T.r..*gu.
+0840: y.......k.......)o.;L...a5.......o...O.m..\!)....`....$..q;.u.y$
+0880: .........f0..b0...U........l.I.Jg....z.HR..V80...U.#..0...N"T ..
+08c0: ..n..........90...U...........0...U.%..0...+.........+.......0..
+0900: .U.......0.......04..+........(0&0$..+.....0...http://ocsp.digic
+0940: ert.com0B..U...;0907.5.3.1http://crl3.digicert.com/DigiCertGloba
+0980: lRootG2.crl0c..U. .\0Z07..`.H...l..0*0(..+.........https://www.d
+09c0: igicert.com/CPS0...`.H...l..0...g.....0...g.....0...*.H.........
+0a00: .....D.9...kfJV....`..3D.\..39:].).........j;2E.CWX.......F.b.:.
+0a40: ....u.O..&..#.j.:....g..T..$..Y.........Y..@.........F.C..5.G...
+0a80: >....f..#.h~...7l..4\.P..q!.......E........]....W.......|(R....?
+0ac0: k.3.K.6....b...a&...qLo..BK....K.].e....uv.zz1.h...].<O.F.[|"...
+0b00: .o....
+== Info: (304) (IN), TLS handshake, CERT verify (15):
+<= Recv SSL data, 264 bytes (0x108)
+0000: ......../.O0..>G,...........N.....b......n%.o(.y3.QI.^.B......kq
+0040: 9.}.....g.H..6.d..f..........U._]y=......D.P.\2D...lCr.U./...R".
+0080: ..M.B.,,#..]B...U...UM.#*<x..n....DM.!aa..[@zO....'..'.IKb..A...
+00c0: ......E.d__.h.sQ...T...T.$5.e[N~=..4Y ...(.>q..t..g.n.q......2m.
+0100: 5.......
+== Info: (304) (IN), TLS handshake, Finished (20):
+<= Recv SSL data, 36 bytes (0x24)
+0000: ... 9...K......X..%.x{D....[.Q.H%...
+== Info: (304) (OUT), TLS handshake, Finished (20):
+=> Send SSL data, 36 bytes (0x24)
+0000: ... ..rK...".~....u...x....x.I....>*
+== Info: SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+== Info: ALPN: server accepted h2
+== Info: Server certificate:
+== Info:  subject: CN=*.mycloudwallet.com
+== Info:  start date: Dec 10 00:00:00 2024 GMT
+== Info:  expire date: Dec 11 23:59:59 2025 GMT
+== Info:  subjectAltName: host "login-api.mycloudwallet.com" matched cert's "*.mycloudwallet.com"
+== Info:  issuer: C=US; O=DigiCert Inc; OU=www.digicert.com; CN=RapidSSL TLS RSA CA G1
+== Info:  SSL certificate verify ok.
+== Info: using HTTP/2
+== Info: [HTTP/2] [1] OPENED stream for https://login-api.mycloudwallet.com/v1/telemetric
+== Info: [HTTP/2] [1] [:method: POST]
+== Info: [HTTP/2] [1] [:scheme: https]
+== Info: [HTTP/2] [1] [:authority: login-api.mycloudwallet.com]
+== Info: [HTTP/2] [1] [:path: /v1/telemetric]
+== Info: [HTTP/2] [1] [user-agent: curl/8.7.1]
+== Info: [HTTP/2] [1] [accept: */*]
+== Info: [HTTP/2] [1] [content-type: application/json]
+== Info: [HTTP/2] [1] [content-length: 226]
+=> Send header, 155 bytes (0x9b)
+0000: POST /v1/telemetric HTTP/2
+001c: Host: login-api.mycloudwallet.com
+003f: User-Agent: curl/8.7.1
+0057: Accept: */*
+0064: Content-Type: application/json
+0084: Content-Length: 226
+0099: 
+=> Send data, 226 bytes (0xe2)
+0000: {.    "name": "network_ping",.    "value": 1,.    "tags": {.    
+0040:   "device_id": "mobile_123",.      "timestamp": "2024-03-30T14:3
+0080: 0:00Z",.      "latency": 150,.      "network_type": "wifi",.    
+00c0:   "app_version": "1.0.0".    }.  }
+== Info: upload completely sent off: 226 bytes
+<= Recv header, 13 bytes (0xd)
+0000: HTTP/2 200 
+<= Recv header, 37 bytes (0x25)
+0000: date: Mon, 31 Mar 2025 02:05:17 GMT
+<= Recv header, 40 bytes (0x28)
+0000: content-type: text/html; charset=UTF-8
+<= Recv header, 23 bytes (0x17)
+0000: vary: Accept-Encoding
+<= Recv header, 34 bytes (0x22)
+0000: cache-control: no-cache, private
+<= Recv header, 22 bytes (0x16)
+0000: content-language: en
+<= Recv header, 122 bytes (0x7a)
+0000: content-security-policy: frame-ancestors 'self' https://wax.io h
+0040: ttps://*.wax.io https://*.opkins.com https://opskins.com
+<= Recv header, 26 bytes (0x1a)
+0000: cf-cache-status: DYNAMIC
+<= Recv header, 20 bytes (0x14)
+0000: server: cloudflare
+<= Recv header, 30 bytes (0x1e)
+0000: cf-ray: 928c47e29d4b40e8-SIN
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 0 bytes (0x0)
+== Info: Connection #0 to host login-api.mycloudwallet.com left intact

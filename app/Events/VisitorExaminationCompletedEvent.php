@@ -7,11 +7,11 @@ use App\DataTransfers\VisitorData;
 use App\Models\VisitorExamination;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class VisitorExaminationCompletedEvent implements ShouldBroadcastNow
 {
@@ -34,9 +34,16 @@ class VisitorExaminationCompletedEvent implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('visitor.' . $this->examination->visitor_id)
-        ];
+        $providerChannel = new Channel('provider.' . $this->examination->provider_id);
+        $visitorChannel = new Channel('visitor.' . $this->examination->visitor_id);
+
+        Log::info('VisitorExaminationCompletedEvent broadcasting on channels', [
+            'provider_channel' => $providerChannel->name,
+            'visitor_channel' => $visitorChannel->name,
+            'examination_id' => $this->examination->id
+        ]);
+        
+        return [$providerChannel, $visitorChannel];
     }
 
     /**
@@ -46,14 +53,30 @@ class VisitorExaminationCompletedEvent implements ShouldBroadcastNow
      */
     public function broadcastWith(): array
     {
-        return [
+        $data = [
             'provider' => ProviderData::fromModel($this->examination->provider)->toArray(),
             'visitor' => VisitorData::fromModel($this->examination->visitor)->toArray(),
-            'message' => 'Your examination has been completed',
+            'message' => 'Visitor examination completed',
             'started_at' => $this->examination->started_at->toISOString(),
-            'ended_at' => $this->examination->ended_at->toISOString(),
-            'duration' => $this->examination->started_at->diffForHumans($this->examination->ended_at),
+            //'completed_at' => $this->examination->completed_at->toISOString(),
+            'duration' => $this->examination->started_at->diffForHumans($this->examination->completed_at),
             'examination_id' => $this->examination->id
         ];
+
+        Log::info('VisitorExaminationCompletedEvent broadcasting data', [
+            'data' => $data
+        ]);
+
+        return $data;
+    }
+
+    /**
+     * Get the name of the event to broadcast.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'visitor.examination.completed';
     }
 } 

@@ -19,6 +19,7 @@ class LoungeQueue extends Model
     ];
 
     protected $casts = [
-        'joined_at' => 'datetime'
+        'joined_at' => 'datetime',
+        'position' => 'integer'
     ];
 } 

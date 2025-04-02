@@ -35,7 +35,7 @@ class ProviderExaminationCompletedEvent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('provider.' . $this->examination->provider_id)
+            new Channel('provider.' . $this->examination->provider_id)
         ];
     }
 
@@ -55,5 +55,15 @@ class ProviderExaminationCompletedEvent implements ShouldBroadcastNow
             'duration' => $this->examination->started_at->diffForHumans($this->examination->ended_at),
             'examination_id' => $this->examination->id
         ];
+    }
+
+    /**
+     * Get the name of the event to broadcast.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'provider.completed.examination';
     }
 } 

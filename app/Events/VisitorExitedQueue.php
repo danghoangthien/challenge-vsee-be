@@ -21,6 +21,19 @@ class VisitorExitedQueue implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new PrivateChannel('visitor.' . $this->visitor->id);
+        return [
+            new Channel('visitor.' . $this->visitor->id),
+            new Channel('lounge.queue')
+        ];
+    }
+
+    /**
+     * Get the name of the event to broadcast.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'visitor.exited.queue';
     }
 } 

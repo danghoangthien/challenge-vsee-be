@@ -544,6 +544,206 @@
                 ]
             }
         },
+        "/api/examination": {
+            "get": {
+                "tags": [
+                    "Examination"
+                ],
+                "summary": "Get current visitor's examination",
+                "description": "Retrieves the current examination details for the authenticated visitor. Requires visitor authentication.",
+                "operationId": "getExaminationByCurrentVisitor",
+                "responses": {
+                    "200": {
+                        "description": "Examination details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "examination_id": {
+                                                    "description": "Unique identifier of the examination",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "provider_id": {
+                                                    "description": "ID of the provider conducting the examination",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "provider_name": {
+                                                    "description": "Full name of the provider",
+                                                    "type": "string",
+                                                    "example": "Dr. Smith"
+                                                },
+                                                "started_at": {
+                                                    "description": "When the examination started",
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-03-29T10:00:00Z"
+                                                },
+                                                "status": {
+                                                    "description": "Current status of the examination",
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "in_progress",
+                                                        "completed",
+                                                        "cancelled"
+                                                    ],
+                                                    "example": "in_progress"
+                                                },
+                                                "duration": {
+                                                    "description": "How long the examination has been running",
+                                                    "type": "string",
+                                                    "example": "5 minutes"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No active examination found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No active examination found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid or missing authentication token"
+                    },
+                    "403": {
+                        "description": "Forbidden - User is not a visitor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/provider/examination": {
+            "get": {
+                "tags": [
+                    "Examination"
+                ],
+                "summary": "Get current provider's examination",
+                "description": "Retrieves the current examination details for the authenticated provider. Requires provider authentication.",
+                "operationId": "getExaminationByCurrentProvider",
+                "responses": {
+                    "200": {
+                        "description": "Examination details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "examination_id": {
+                                                    "description": "Unique identifier of the examination",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "visitor_id": {
+                                                    "description": "ID of the visitor being examined",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "visitor_name": {
+                                                    "description": "Full name of the visitor",
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "started_at": {
+                                                    "description": "When the examination started",
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-03-29T10:00:00Z"
+                                                },
+                                                "status": {
+                                                    "description": "Current status of the examination",
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "in_progress",
+                                                        "completed",
+                                                        "cancelled"
+                                                    ],
+                                                    "example": "in_progress"
+                                                },
+                                                "duration": {
+                                                    "description": "How long the examination has been running",
+                                                    "type": "string",
+                                                    "example": "5 minutes"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No active examination found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No active examination found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid or missing authentication token"
+                    },
+                    "403": {
+                        "description": "Forbidden - User is not a provider"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/visitor/lounge/queue": {
             "post": {
                 "tags": [
@@ -908,6 +1108,67 @@
                     }
                 ]
             }
+        },
+        "/api/lounge/queue": {
+            "get": {
+                "tags": [
+                    "Lounge Queue"
+                ],
+                "summary": "Get current visitor's queue item",
+                "description": "Get the current visitor's position and details in the lounge queue",
+                "operationId": "getQueueItemByCurrentVisitor",
+                "responses": {
+                    "200": {
+                        "description": "Queue item details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "position": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "joined_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-03-29T10:00:00Z"
+                                                },
+                                                "waited_time": {
+                                                    "type": "string",
+                                                    "example": "5 minutes"
+                                                },
+                                                "estimated_wait_time": {
+                                                    "type": "string",
+                                                    "example": "10 minutes"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Visitor not found in queue"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -927,6 +1188,10 @@
         {
             "name": "Authentication",
             "description": "API endpoints for user authentication"
+        },
+        {
+            "name": "Examination",
+            "description": "API endpoints for managing visitor examinations"
         },
         {
             "name": "Lounge Queue",

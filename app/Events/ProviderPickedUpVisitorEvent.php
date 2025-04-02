@@ -12,6 +12,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ProviderPickedUpVisitorEvent implements ShouldBroadcastNow
 {
@@ -34,9 +35,14 @@ class ProviderPickedUpVisitorEvent implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('provider.' . $this->examination->provider_id)
-        ];
+        $channel = new Channel('provider.' . $this->examination->provider_id);
+        Log::info('ProviderPickedUpVisitorEvent broadcasting on channel', [
+            'channel' => $channel->name,
+            'provider_id' => $this->examination->provider_id,
+            'examination_id' => $this->examination->id
+        ]);
+        
+        return [$channel];
     }
 
     /**
@@ -46,12 +52,28 @@ class ProviderPickedUpVisitorEvent implements ShouldBroadcastNow
      */
     public function broadcastWith(): array
     {
-        return [
+        $data = [
             'provider' => ProviderData::fromModel($this->examination->provider)->toArray(),
             'visitor' => VisitorData::fromModel($this->examination->visitor)->toArray(),
             'message' => 'You have picked up a visitor',
             'started_at' => $this->examination->started_at->toISOString(),
             'examination_id' => $this->examination->id
         ];
+
+        Log::info('ProviderPickedUpVisitorEvent broadcasting data', [
+            'data' => $data
+        ]);
+
+        return $data;
+    }
+
+    /**
+     * Get the name of the event to broadcast.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'provider.pickedup.visitor';
     }
 }

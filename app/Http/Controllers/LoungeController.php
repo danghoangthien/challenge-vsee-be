@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use App\Exceptions\ProviderBusyException;
 use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 /**
  * @OA\Tag(
@@ -200,68 +201,10 @@ class LoungeController extends Controller
                 'message' => $e->getMessage()
             ], Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
+            logger()->info($e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'An unexpected error occurred while picking up the visitor'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/provider/lounge/dropoff",
-     *     summary="Drop off visitor",
-     *     description="Complete a visitor examination and remove them from the provider's care",
-     *     operationId="dropoffVisitor",
-     *     tags={"Lounge Queue"},
-     *     security={{"bearerAuth": {}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"visitor_id"},
-     *             @OA\Property(property="visitor_id", type="integer", description="ID of the visitor to drop off")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Visitor successfully dropped off",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="visitor_id", type="integer", example=1),
-     *                 @OA\Property(property="visitor_name", type="string", example="John Doe"),
-     *                 @OA\Property(property="examination_duration", type="string", example="15 minutes"),
-     *                 @OA\Property(property="message", type="string", example="Successfully completed visitor examination")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Visitor examination not found or not in progress"
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
-    public function dropoffVisitor(ProviderRequest $request): JsonResponse
-    {
-        try {
-            $provider = $request->getProvider();
-            $visitorId = $request->input('visitor_id');
-            $result = $this->loungeQueueService->dropoffVisitor($provider, $visitorId);
-
-            return response()->json($result);
-        } catch (NotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], Response::HTTP_NOT_FOUND);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An unexpected error occurred while dropping off the visitor'
+                'message' => 'An unexpected error occurred while picking up the visitor:' . $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -315,6 +258,62 @@ class LoungeController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'An unexpected error occurred while removing from queue'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Get the current visitor's queue item.
+     *
+     * @OA\Get(
+     *     path="/api/lounge/queue",
+     *     summary="Get current visitor's queue item",
+     *     description="Get the current visitor's position and details in the lounge queue",
+     *     operationId="getQueueItemByCurrentVisitor",
+     *     tags={"Lounge Queue"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Queue item details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="position", type="integer", example=3),
+     *                 @OA\Property(property="joined_at", type="string", format="date-time", example="2024-03-29T10:00:00Z"),
+     *                 @OA\Property(property="waited_time", type="string", example="5 minutes"),
+     *                 @OA\Property(property="estimated_wait_time", type="string", example="10 minutes")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Visitor not found in queue"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     )
+     * )
+     */
+    public function getQueueItemByCurrentVisitor(Request $request): JsonResponse
+    {
+        try {
+            $visitor = $request->context['visitor'];
+            $queueData = $this->loungeQueueService->getQueueItemByVisitor($visitor);
+
+            return response()->json([
+                'success' => true,
+                'data' => $queueData
+            ]);
+        } catch (NotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred while fetching queue item'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('started_at')->nullable();
             $table->timestamp('ended_at')->nullable();
             $table->string('status')->default('pending');
+            $table->string('reason')->nullable();
             $table->timestamps();
         });
     }

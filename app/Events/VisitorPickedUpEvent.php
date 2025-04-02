@@ -35,7 +35,7 @@ class VisitorPickedUpEvent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('visitor.' . $this->examination->visitor_id)
+            new Channel('visitor.' . $this->examination->visitor_id)
         ];
     }
 
@@ -51,7 +51,18 @@ class VisitorPickedUpEvent implements ShouldBroadcastNow
             'visitor' => VisitorData::fromModel($this->examination->visitor)->toArray(),
             'message' => 'You have been picked up by a provider',
             'started_at' => $this->examination->started_at->toISOString(),
-            'examination_id' => $this->examination->id
+            'examination_id' => $this->examination->id,
+            'reason' => $this->examination->reason
         ];
+    }
+
+    /**
+     * Get the name of the event to broadcast.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'visitor.examination.pickedup';
     }
 } 

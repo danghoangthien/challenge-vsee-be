@@ -104,7 +104,7 @@ class AuthController extends Controller
                 'status' => 'success',
                 'user' => [
                     'id' => $user->id,
-                    'name' => $user->name,
+                    'name' => $user->firstname . ' ' . $user->lastname,
                     'email' => $user->email,
                     'type' => $userType,
                     'type_id' => $typeId
@@ -128,13 +128,12 @@ class AuthController extends Controller
      * @OA\Post(
      *     path="/api/logout",
      *     summary="Logout user",
-     *     description="Invalidate the JWT token",
+     *     description="Logout the authenticated user and invalidate their token",
      *     operationId="logout",
      *     tags={"Authentication"},
-     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Logout successful",
+     *         description="Successfully logged out",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="message", type="string", example="Successfully logged out")
@@ -142,21 +141,45 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Unauthenticated")
-     *         )
+     *         description="Unauthorized"
      *     )
      * )
      */
     public function logout()
     {
-        Auth::logout();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully logged out',
-        ]);
+        try {
+            // Get the token from the request
+            $token = JWTAuth::getToken();
+
+            if ($token) {
+                // Try to invalidate the token
+                JWTAuth::invalidate($token);
+            }
+
+            Auth::logout();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully logged out',
+            ]);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            // Token is expired, but we still want to consider this a successful logout
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully logged out (token was expired)',
+            ]);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            // Token is invalid, but we still want to consider this a successful logout
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully logged out (token was invalid)',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to logout',
+            ], 500);
+        }
     }
 
     /**

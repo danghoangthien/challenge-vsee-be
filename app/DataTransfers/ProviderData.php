@@ -21,9 +21,9 @@ class ProviderData
     {
         return new self(
             id: $provider->id,
-            user_id: $provider->user_id,
-            department_id: $provider->department_id,
-            role_id: $provider->role_id,
+            user_id: (int)$provider->user_id,
+            department_id: (int)$provider->department_id,
+            role_id: (int)$provider->role_id,
             name: $provider->user ? $provider->user->firstname . ' ' . $provider->user->lastname : null,
             email: $provider->user?->email,
             created_at: $provider->created_at?->toISOString(),

@@ -34,7 +34,7 @@ class LoungeQueueService
     /**
      * Enqueue a visitor to the lounge queue.
      */
-    public function enqueueVisitor(Visitor $visitor): int
+    public function enqueueVisitor(Visitor $visitor, ?string $reason = null): int
     {
         // Check if visitor is already in queue
         $existingQueue = LoungeQueue::where('visitor_id', $visitor->id)->first();
@@ -53,6 +53,7 @@ class LoungeQueueService
             'user_id' => $visitor->user_id,
             'position' => $lastPosition + 1,
             'joined_at' => now(),
+            'reason' => $reason
         ]);
 
         event(new VisitorJoinedQueue($visitor));
@@ -79,7 +80,7 @@ class LoungeQueueService
             return [
                 'position' => $queue->position,
                 'visitor_id' => $queue->visitor_id,
-                'visitor_name' => $visitor ? $visitor->user->name : 'Unknown',
+                'visitor_name' => $visitor ? $visitor->user->firstname . ' ' . $visitor->user->lastname : 'Unknown',
                 'joined_at' => $queue->joined_at,
                 'reason' => $queue->reason,
                 'waiting_time' => $queue->joined_at->diffForHumans()
@@ -100,7 +101,7 @@ class LoungeQueueService
      */
     public function pickupVisitor(Provider $provider, ?string $visitorId = null): array
     {
-        // Check if provider is already examining another visitor
+        // Check if provider is already examining another visitor        
         $inProgressExamination = VisitorExamination::where('provider_id', $provider->id)
             ->where('status', 'in_progress')
             ->first();
@@ -149,7 +150,8 @@ class LoungeQueueService
                     'visitor_id' => $queueEntry->visitor_id,
                     'provider_id' => $provider->id,
                     'started_at' => now(),
-                    'status' => 'in_progress'
+                    'status' => 'in_progress',
+                    'reason' => $queueEntry->reason
                 ]);
 
                 // Remove visitor from queue and update positions
@@ -158,16 +160,24 @@ class LoungeQueueService
                     ->update(['position' => DB::raw('position - 1')]);
 
                 // Dispatch events to notify both visitor and provider
+                Log::info('Dispatching ProviderPickedUpVisitorEvent', [
+                    'examination_id' => $examination->id,
+                    'provider_id' => $provider->id,
+                    'visitor_id' => $queueEntry->visitor_id
+                ]);
+
                 event(new VisitorPickedUpEvent($examination));
                 event(new ProviderPickedUpVisitorEvent($examination));
 
-                DB::commit();
+                Log::info('Events dispatched successfully');
 
+                DB::commit();
+                $visitor = Visitor::find($queueEntry->visitor_id);
                 return [
                     'success' => true,
                     'data' => [
                         'visitor_id' => $queueEntry->visitor_id,
-                        'visitor_name' => $queueEntry->visitor->user->name ?? 'Unknown',
+                        'visitor_name' => $visitor->user->firstname . ' ' . $visitor->user->lastname ?? 'Unknown',
                         'waited_time' => $queueEntry->joined_at->diffForHumans(),
                         'examination_id' => $examination->id,
                         'message' => 'Successfully picked up visitor from queue'
@@ -178,38 +188,6 @@ class LoungeQueueService
                 throw $e;
             }
         });
-    }
-
-    /**
-     * Complete a visitor examination.
-     */
-    public function dropoffVisitor(Provider $provider, string $visitorId): array
-    {
-        // Get examination record
-        $examination = VisitorExamination::where('visitor_id', $visitorId)
-            ->where('provider_id', $provider->id)
-            ->where('status', 'in_progress')
-            ->first();
-        
-        if (!$examination) {
-            throw new NotFoundException('Visitor examination not found or not in progress');
-        }
-
-        // Update examination record
-        $examination->update([
-            'status' => 'completed',
-            'completed_at' => now()
-        ]);
-
-        return [
-            'success' => true,
-            'data' => [
-                'visitor_id' => $examination->visitor_id,
-                'visitor_name' => $examination->visitor->user->name ?? 'Unknown',
-                'examination_duration' => $examination->started_at->diffForHumans($examination->completed_at),
-                'message' => 'Successfully completed visitor examination'
-            ]
-        ];
     }
 
     /**
@@ -240,7 +218,7 @@ class LoungeQueueService
                     'success' => true,
                     'data' => [
                         'visitor_id' => $visitor->id,
-                        'visitor_name' => $visitor->user->name ?? 'Unknown',
+                        'visitor_name' => $visitor->user->firstname . ' ' . $visitor->user->lastname ?? 'Unknown',
                         'waited_time' => $queueEntry->joined_at->diffForHumans(),
                         'message' => 'Successfully removed from queue'
                     ]
@@ -250,5 +228,35 @@ class LoungeQueueService
                 throw $e;
             }
         });
+    }
+
+    /**
+     * Get queue item details for a visitor
+     * 
+     * @param Visitor $visitor
+     * @return array
+     * @throws NotFoundException
+     */
+    public function getQueueItemByVisitor(Visitor $visitor): array
+    {
+        $queueItem = LoungeQueue::where('visitor_id', $visitor->id)
+            ->first();
+
+        if (!$queueItem) {
+            throw new NotFoundException('Visitor not found in queue');
+        }
+
+        // Ensure position is an integer
+        $position = (int) $queueItem->position;
+        
+        // Calculate estimated wait time (assuming average 5 minutes per visitor)
+        $estimatedWaitTime = ($position - 1) * 5 . ' minutes';
+
+        return [
+            'position' => $position,
+            'joined_at' => $queueItem->joined_at->toISOString(),
+            'waited_time' => $queueItem->joined_at->diffForHumans(),
+            'estimated_wait_time' => $estimatedWaitTime
+        ];
     }
 } 

@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Visitor;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class VisitorExitedEvent implements ShouldBroadcast
+class ClientEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,9 +18,8 @@ class VisitorExitedEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public readonly Visitor $visitor,
-        public readonly int $position,
-        public readonly string $waitedTime
+        public string $eventName,
+        public array $data
     ) {}
 
     /**
@@ -32,8 +30,28 @@ class VisitorExitedEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('visitor.' . $this->visitor->id),
-            new Channel('lounge.queue')
+            new Channel('client-events'),
         ];
     }
-} 
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'event' => $this->eventName,
+            'data' => $this->data,
+        ];
+    }
+
+    /**
+     * Get the name of the event to broadcast as.
+     */
+    public function broadcastAs(): string
+    {
+        return 'client-' . $this->eventName;
+    }
+}

@@ -35,7 +35,7 @@ class ProviderPostponeVisitorEvent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('visitor.' . $this->visitor->id),
+            new Channel('visitor.' . $this->visitor->id),
         ];
     }
 } 

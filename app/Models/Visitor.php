@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $id
  * @property int $user_id
+ * @property string|null $vsee_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * 
@@ -22,6 +23,7 @@ class Visitor extends Model
 
     protected $fillable = [
         'user_id',
+        'vsee_id',
     ];
 
     /**

@@ -106,7 +106,7 @@ class ExaminationService
                 'visitor_id' => $examination->visitor_id,
                 'visitor_name' => $examination->visitor->user->name ?? 'Unknown',
                 'examination_duration' => $examination->started_at->diffForHumans($examination->completed_at),
-                'message' => 'Successfully completed visitor examination'
+                'message' => 'Examination completed successfully'
             ]
         ];
     }
@@ -141,7 +141,8 @@ class ExaminationService
                     'examination_id' => $examination->id,
                     'visitor_id' => $visitor->id,
                     'provider_id' => $examination->provider_id,
-                    'completed_at' => $examination->completed_at->toISOString(),
+                    'examination_duration' => $examination->started_at->diffForHumans($examination->completed_at),
+                    //'completed_at' => $examination->completed_at->toISOString(),
                     'message' => 'Examination completed successfully'
                 ]
             ];

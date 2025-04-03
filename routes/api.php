@@ -45,13 +45,14 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/lounge/queue', [LoungeController::class, 'exit']);
         Route::get('/lounge/queueItem', [LoungeController::class, 'getQueueItemByCurrentVisitor']);
         Route::get('/examination/detail', [ExaminationController::class, 'getExaminationByCurrentVisitor']);
+        Route::post('/examination/complete', [ExaminationController::class, 'completeExaminationByVisitor']);
     });
 
     // Provider-specific routes
     Route::prefix('provider')->middleware(['auth:api', 'user', 'provider'])->group(function () {
         Route::get('/lounge/list', [LoungeController::class, 'getWaitingList']);
         Route::post('/lounge/pickup', [LoungeController::class, 'pickupVisitor']);
-        Route::post('/examination/complete', [ExaminationController::class, 'completeExamination']);
+        Route::post('/examination/complete', [ExaminationController::class, 'completeExaminationByProvider']);
         Route::get('/examination/detail', [ExaminationController::class, 'getExaminationByCurrentProvider']);
     });
 });

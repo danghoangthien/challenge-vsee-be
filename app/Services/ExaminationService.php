@@ -8,6 +8,7 @@ use App\Models\Provider;
 use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Log;
 use App\Events\VisitorExaminationCompletedEvent;
+use Illuminate\Support\Facades\DB;
 
 class ExaminationService
 {
@@ -72,7 +73,7 @@ class ExaminationService
     /**
      * Complete a visitor examination.
      */
-    public function completeExamination(Provider $provider, string $visitorId): array
+    public function completeExaminationByProvider(Provider $provider, string $visitorId): array
     {
         // Get examination record
         $examination = VisitorExamination::where('visitor_id', $visitorId)
@@ -108,5 +109,45 @@ class ExaminationService
                 'message' => 'Successfully completed visitor examination'
             ]
         ];
+    }
+
+    /**
+     * Complete an examination by visitor
+     */
+    public function completeExaminationByVisitor(Visitor $visitor): array
+    {
+        $examination = VisitorExamination::where('visitor_id', $visitor->id)
+            ->where('status', 'in_progress')
+            ->first();
+
+        if (!$examination) {
+            throw new NotFoundException('No active examination found for this visitor');
+        }
+
+        DB::beginTransaction();
+        try {
+            $examination->update([
+                'status' => 'completed',
+                'completed_at' => now()
+            ]);
+
+            event(new VisitorExaminationCompletedEvent($examination));
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'data' => [
+                    'examination_id' => $examination->id,
+                    'visitor_id' => $visitor->id,
+                    'provider_id' => $examination->provider_id,
+                    'completed_at' => $examination->completed_at->toISOString(),
+                    'message' => 'Examination completed successfully'
+                ]
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

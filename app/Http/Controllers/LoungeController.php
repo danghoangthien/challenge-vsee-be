@@ -65,7 +65,8 @@ class LoungeController extends Controller
     {
         try {
             $visitor = $request->getVisitor();
-            $position = $this->loungeQueueService->enqueueVisitor($visitor);
+            $reason = $request->input('reason', '');
+            $position = $this->loungeQueueService->enqueueVisitor($visitor, $reason);
 
             return response()->json([
                 'success' => true,
